@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+#
+# qpdfview_session is a python script to manage qpdfview tab and bookmark
+# sessions.
+#
+# To see the help, run the program without any arguments or with -h argument.
+
+import shutil
+import os
+import sys
+import argparse
+
+
+storage_dir = os.path.expanduser('~/.qpdfview_session')
+session_dir = os.path.join(storage_dir, 'sessions')
+
+backup_dir = os.path.join(storage_dir, 'session_backups')
+backup_path = os.path.join(backup_dir, '.restore_session_backup')
+
+qpdfview_database_dir = os.path.expanduser('~/.local/share/qpdfview/qpdfview')
+qpdfview_database_path = os.path.join(qpdfview_database_dir, 'database')
+
+
+def prepare_parser():
+    """
+    Setup the program arguments.
+
+    Returns
+    -------
+    parser : argparse.ArgumentParser
+        Parser object set up with the program arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description='Save and restore qpdfview tab and bookmark sessions'
+    )
+    parser.add_argument(
+        '--list',
+        help='List the current sessions',
+        default=False,
+        action='store_true',
+    )
+    parser.add_argument(
+        '--save',
+        help='Save the current session with the given name',
+        metavar='name'
+    )
+    parser.add_argument(
+        '--restore',
+        help='Restore the session with the given name',
+        metavar='name'
+    )
+    parser.add_argument(
+        '--delete',
+        help='Delete the session with the given name',
+        metavar='name'
+    )
+    parser.add_argument(
+        '--backup',
+        help='Backup all the saved sessions',
+        default=False,
+        action='store_true',
+    )
+    return parser
+
+
+def prepare_storage_dir():
+    """
+    Create the storage directory if it doesn't exist.
+    """
+    if not os.path.exists(storage_dir):
+        os.makedirs(storage_dir)
+
+
+def list_sessions():
+    """
+    List all the previously saved sessions.
+    """
+    for session_name in os.listdir(session_dir):
+        print(session_name)
+
+
+def save_session(session_name):
+    """
+    Save the current qpdfview session to a session with the given name.
+
+    Parameters
+    ----------
+    session_name : str
+        Name of the saved session.
+    """
+    save_path = os.path.join(session_dir, session_name)
+    shutil.copy(qpdfview_database_path, save_path)
+    print('Current session is saved to {}'.format(save_path))
+
+
+def restore_session(session_name):
+    """
+    Restore a previously saved session with the given session name.
+
+    Before restoring the session, take a backup of the current qpdfview session.
+
+    Parameters
+    ----------
+    session_name : str
+        Name of the session to restore.
+    """
+    restore_path = os.path.join(session_dir, session_name)
+
+    shutil.copy(qpdfview_database_path, backup_path)
+    print('Current session is saved to {}'.format(backup_path))
+    shutil.copy(restore_path, qpdfview_database_path)
+    print('{} session is restored'.format(session_name))
+
+
+def delete_session(session_name):
+    """
+    Delete a previously saved session with the given session name.
+
+    Parameters
+    ----------
+    session_name : str
+        Name of the session to delete.
+    """
+    delete_path = os.path.join(session_dir, session_name)
+
+    os.remove(delete_path)
+    print('{} session is deleted'.format(session_name))
+
+
+def backup_saved_sessions():
+    """
+    Backup all the previously saved sessions to the backup directory.
+    """
+    if os.path.exists(backup_dir):
+        shutil.rmtree(backup_dir)
+        print('Previous backups are deleted')
+
+    shutil.copytree(session_dir, backup_dir)
+    print('All saved sessions are copied to {}'.format(backup_dir))
+
+
+
+def main():
+    """
+    Main script.
+
+    Parse arguments and take the action specified by the user.
+    """
+    parser = prepare_parser()
+    args = parser.parse_args()
+
+    prepare_storage_dir()
+
+    if args.list:
+        list_sessions()
+    elif args.save:
+        save_session(args.save)
+    elif args.restore:
+        restore_session(args.restore)
+    elif args.delete:
+        delete_session(args.delete)
+    elif args.backup:
+        backup_saved_sessions()
+    else:
+        parser.print_help()
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
