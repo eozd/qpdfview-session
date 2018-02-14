@@ -1,4 +1,4 @@
-## qpdfview-sessions
+## qpdfview-session
 Easily manage qpdfview tab and bookmark sessions. Current features are:
 
 1. Store current tab and bookmark session
