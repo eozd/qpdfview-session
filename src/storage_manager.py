@@ -1,6 +1,6 @@
 import os
 
-import constants
+import qpdfview_session.constants as constants
 
 
 def prepare_storage_dir():

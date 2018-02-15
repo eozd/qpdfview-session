@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
+
+
 import sys
 
-import parse
-import session_manager
-import storage_manager
+import qpdfview_session.parse as parse
+import qpdfview_session.session_manager as session_manager
+import qpdfview_session.storage_manager as storage_manager
 
 
 def main():

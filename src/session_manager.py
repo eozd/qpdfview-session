@@ -3,7 +3,7 @@ import os
 import sys
 import argparse
 
-import constants
+import qpdfview_session.constants as constants
 
 
 def list_sessions():
