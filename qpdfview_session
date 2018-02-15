@@ -106,10 +106,13 @@ def restore_session(session_name):
     """
     restore_path = os.path.join(session_dir, session_name)
 
-    shutil.copy(qpdfview_database_path, backup_path)
-    print('Current session is saved to {}'.format(backup_path))
-    shutil.copy(restore_path, qpdfview_database_path)
-    print('{} session is restored'.format(session_name))
+    if os.path.exists(restore_path):
+        shutil.copy(qpdfview_database_path, backup_path)
+        print('Current session is saved to {}'.format(backup_path))
+        shutil.copy(restore_path, qpdfview_database_path)
+        print('{} session is restored'.format(session_name))
+    else:
+        print('No such session: {}'.format(session_name))
 
 
 def delete_session(session_name):
@@ -123,8 +126,11 @@ def delete_session(session_name):
     """
     delete_path = os.path.join(session_dir, session_name)
 
-    os.remove(delete_path)
-    print('{} session is deleted'.format(session_name))
+    if os.path.exists(delete_path):
+        os.remove(delete_path)
+        print('{} session is deleted'.format(session_name))
+    else:
+        print('No such session: {}'.format(session_name))
 
 
 def backup_saved_sessions():
