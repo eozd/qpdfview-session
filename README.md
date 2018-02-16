@@ -1,4 +1,4 @@
-## qpdfview-session
+## qpdfview-session ![travis-build](https://travis-ci.org/eozd/qpdfview-session.svg?branch=master)
 Easily manage qpdfview tab and bookmark sessions. Current features are:
 
 1. Store current tab and bookmark session
