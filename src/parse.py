@@ -40,4 +40,10 @@ def prepare_parser():
         default=False,
         action='store_true',
     )
+    parser.add_argument(
+        '--clean',
+        help='Clean the current session',
+        default=False,
+        action='store_true'
+    )
     return parser

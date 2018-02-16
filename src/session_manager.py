@@ -78,3 +78,13 @@ def backup_saved_sessions():
 
     shutil.copytree(constants.session_dir, constants.backup_dir)
     print('All saved sessions are copied to {}'.format(constants.backup_dir))
+
+
+def clean_session():
+    """
+    Clean the current session and get rid of all tabs and bookmarks.
+    """
+    if os.path.exists(constants.qpdfview_database_path):
+        os.remove(constants.qpdfview_database_path)
+
+    print('Current session is cleaned')
