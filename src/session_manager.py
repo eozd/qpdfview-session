@@ -8,10 +8,14 @@ import qpdfview_session.constants as constants
 
 def list_sessions():
     """
-    List all the previously saved sessions.
+    Return a list all the previously saved session names.
+
+    Returns
+    -------
+    session_list : list
+        List of previously saved session names.
     """
-    for session_name in os.listdir(constants.session_dir):
-        print(session_name)
+    return os.listdir(constants.session_dir)
 
 
 def save_session(session_name):
@@ -25,7 +29,6 @@ def save_session(session_name):
     """
     save_path = os.path.join(constants.session_dir, session_name)
     shutil.copy(constants.qpdfview_database_path, save_path)
-    print('Current session is saved to {}'.format(save_path))
 
 
 def restore_session(session_name):
@@ -38,16 +41,18 @@ def restore_session(session_name):
     ----------
     session_name : str
         Name of the session to restore.
+
+    Raises
+    ------
+    ValueError
+        If the session with the given name doesn't exist.
     """
     restore_path = os.path.join(constants.session_dir, session_name)
 
-    if os.path.exists(restore_path):
-        shutil.copy(constants.qpdfview_database_path, constants.backup_path)
-        print('Current session is saved to {}'.format(constants.backup_path))
+    try:
         shutil.copy(restore_path, constants.qpdfview_database_path)
-        print('{} session is restored'.format(session_name))
-    else:
-        print('No such session: {}'.format(session_name))
+    except FileNotFoundError:
+        raise ValueError('No such session: {}'.format(session_name))
 
 
 def delete_session(session_name):
@@ -58,14 +63,18 @@ def delete_session(session_name):
     ----------
     session_name : str
         Name of the session to delete.
+
+    Raises
+    ------
+    ValueError
+        If the session with the given name doesn't exist
     """
     delete_path = os.path.join(constants.session_dir, session_name)
 
-    if os.path.exists(delete_path):
+    try:
         os.remove(delete_path)
-        print('{} session is deleted'.format(session_name))
-    else:
-        print('No such session: {}'.format(session_name))
+    except FileNotFoundError:
+        raise ValueError('No such session: {}'.format(session_name))
 
 
 def backup_saved_sessions():
@@ -74,17 +83,20 @@ def backup_saved_sessions():
     """
     if os.path.exists(constants.backup_dir):
         shutil.rmtree(constants.backup_dir)
-        print('Previous backups are deleted')
 
     shutil.copytree(constants.session_dir, constants.backup_dir)
-    print('All saved sessions are copied to {}'.format(constants.backup_dir))
 
 
 def clean_session():
     """
     Clean the current session and get rid of all tabs and bookmarks.
-    """
-    if os.path.exists(constants.qpdfview_database_path):
-        os.remove(constants.qpdfview_database_path)
 
-    print('Current session is cleaned')
+    Raises
+    ------
+    ValueError
+        If there is no session to clean
+    """
+    try:
+        os.remove(constants.qpdfview_database_path)
+    except FileNotFoundError:
+        raise ValueError('There was no session to clean')

@@ -20,17 +20,32 @@ def main():
     storage_manager.prepare_storage_dir()
 
     if args.list:
-        session_manager.list_sessions()
+        for session in session_manager.list_sessions():
+            print(session)
     elif args.save:
         session_manager.save_session(args.save)
+        print('Current session is saved as {}'.format(args.save))
     elif args.restore:
-        session_manager.restore_session(args.restore)
+        try:
+            session_manager.restore_session(args.restore)
+            print('{} session is restored'.format(args.restore))
+        except ValueError as error:
+            print(error)
     elif args.delete:
-        session_manager.delete_session(args.delete)
+        try:
+            session_manager.delete_session(args.delete)
+            print('{} session is deleted'.format(args.delete))
+        except ValueError as error:
+            print(error)
     elif args.backup:
         session_manager.backup_saved_sessions()
+        print('Backups generated for all previously saved sessions')
     elif args.clean:
-        session_manager.clean_session()
+        try:
+            session_manager.clean_session()
+            print('Current session is cleaned')
+        except ValueError as error:
+            print(error)
     else:
         parser.print_help()
         sys.exit(1)
