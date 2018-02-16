@@ -10,3 +10,14 @@ Easily manage qpdfview tab and bookmark sessions. Current features are:
 
 ### Requirements
 * python 3
+
+### Installation
+1. ```python setup.py install```
+
+### Running
+After installing, qpdfview-session script should be installed. To see the help
+type
+
+```
+qpdfview-session -h
+```
